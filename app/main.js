@@ -2,6 +2,7 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
+const ipc = require("electron").ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -23,7 +24,7 @@ app.on('ready', function() {
   mainWindow = new BrowserWindow({width: 800, height: 600});
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -34,5 +35,21 @@ app.on('ready', function() {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null;
+  });
+
+  var preferencesWindow = new BrowserWindow({
+    width: 400,
+    height: 400,
+    show: false
+  });
+  preferencesWindow.loadURL(`file://${__dirname}/preferences.html`);
+
+  ipc.on('toggle-preferences', function() {
+    if(preferencesWindow.isVisible()) {
+      preferencesWindow.hide();
+    }
+    else {
+      preferencesWindow.show();
+    }
   });
 });
