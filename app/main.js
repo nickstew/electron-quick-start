@@ -2,11 +2,17 @@
 const electron = require('electron');
 const app = electron.app;  // Module to control application life.
 const BrowserWindow = electron.BrowserWindow;  // Module to create native browser window.
-const ipc = require("electron").ipcMain;
+const ipc = require('electron').ipcMain;
+//const updater = require('electron-updater');
+
+//require('electron-debug')({
+//  showDevTools: true
+//});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let preferencesWindow;
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -17,32 +23,35 @@ app.on('window-all-closed', function() {
   }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
 app.on('ready', function() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  //updater.on('ready', function() {
+    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.on('closed', function() {
+      // Dereference the window object, usually you would store windows
+      // in an array if your app supports multi windows, this is the time
+      // when you should delete the corresponding element.
+      mainWindow = null;
+    });
+  //});
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //updater.on('updateRequired', function() {
+  //  app.quit();
+  //});
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
+  //updater.on('updateAvailable', function() {
+  //  if(mainWindow) {
+  //    mainWindow.webContents.send('update-available');
+  //  }
+  //});
 
-  var preferencesWindow = new BrowserWindow({
+  preferencesWindow = new BrowserWindow({
     width: 400,
     height: 400,
     show: false
   });
-  preferencesWindow.loadURL(`file://${__dirname}/preferences.html`);
+  preferencesWindow.loadURL('file://' + __dirname + '/preferences.html');
 
   ipc.on('toggle-preferences', function() {
     if(preferencesWindow.isVisible()) {
@@ -52,4 +61,5 @@ app.on('ready', function() {
       preferencesWindow.show();
     }
   });
+  //updater.start();
 });

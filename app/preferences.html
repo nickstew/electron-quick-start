@@ -7,7 +7,7 @@
 <body>
   Preferences
   <script>
-    var ipc = require('ipc')
+    var ipc = require('electron').ipcRenderer
 
     var button = document.createElement('button')
     button.textContent = 'Hide'
